@@ -2,14 +2,10 @@
 import os
 import configparser
 from pyrogram import Client
-
-# Define the path to the config file
+from pyrogram import types
 config_file = 'config.ini'
-
-# Function to read or prompt for API credentials
 def get_api_credentials():
     config = configparser.ConfigParser()
-
     # Check if the config file exists
     if os.path.exists(config_file):
         config.read(config_file)
@@ -45,30 +41,15 @@ api_id, api_hash = get_api_credentials()
 phone_number = input("Enter your phone number (in international format, e.g., +123456789): ")
 # Initialize Pyrogram Client
 app = Client("my_account", api_id=api_id, api_hash=api_hash, phone_number=phone_number)
-
-# Main function to retrieve the list of subscribed channels
-# async def list_channels():
-#     with app:
-#         print("Successfully logged in.")
-#         
-#         # Fetch the list of dialogs (channels, groups, etc.)
-#         dialogs = app.get_dialogs()
-#
-#         # Filter only the channels from the dialogs
-#         channels = [dialog.chat for dialog in dialogs if dialog.chat.type == "channel"]
-#
-#         # Print the subscribed channels
-#         print("\nSubscribed channels:")
-#         for channel in channels:
-#             print(f"Channel: {channel.title}, ID: {channel.id}")
-#
-# # Run the function to list subscribed channels
-# app.run(list_channels())
+dialogs = []
+channels =[]
 async def main():
     async with app:
         async for dialog in app.get_dialogs():
-            print(dialog.chat.title or dialog.chat.first_name)
-
+            # print(dialog.chat.title or dialog.chat.first_name, dialog.chat.type)
+             if dialog.chat.type.value == "channel":
+                 print (f"{dialog.chat.title}")
+                 channels.append(dialog)
 
 app.run(main())
 
