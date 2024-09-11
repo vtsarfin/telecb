@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 import os
 import configparser
+import uvloop
 from pyrogram import Client
-from pyrogram import types
+import argparse
+argparser=argparse.ArgumentParser()
+argparser.add_argument('--phone',dest='phone_number',type=str,help='Your phone number associated with Telegram account')
 config_file = 'config.ini'
 def get_api_credentials():
     config = configparser.ConfigParser()
@@ -11,6 +14,7 @@ def get_api_credentials():
         config.read(config_file)
         api_id = config['Telegram']['api_id']
         api_hash = config['Telegram']['api_hash']
+        phone_number = config['User']['phone_number']
     else:
         # If the config file doesn't exist, prompt the user for input
         print("To use this script, you need to obtain your own Telegram API ID and API Hash.")
@@ -32,14 +36,15 @@ def get_api_credentials():
         with open(config_file, 'w') as configfile:
             config.write(configfile)
 
-    return int(api_id), api_hash
+    return int(api_id), api_hash, phone_number
 
 # Get the credentials (either from the file or user input)
-api_id, api_hash = get_api_credentials()
+api_id, api_hash, phone_number = get_api_credentials()
 
 # Prompt for phone number
-phone_number = input("Enter your phone number (in international format, e.g., +123456789): ")
+if not phone_number: phone_number = input("Enter your phone number (in international format, e.g., +123456789): ")
 # Initialize Pyrogram Client
+uvloop.install()
 app = Client("my_account", api_id=api_id, api_hash=api_hash, phone_number=phone_number)
 dialogs = []
 channels =[]

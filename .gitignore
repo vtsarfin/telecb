@@ -1,1 +1,4 @@
 my_account.session
+.gitignore
+config.ini
+channels_*
