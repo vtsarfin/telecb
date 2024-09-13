@@ -5,7 +5,11 @@ import uvloop
 from pyrogram import Client
 import argparse
 argparser=argparse.ArgumentParser()
-argparser.add_argument('--phone',dest='phone_number',type=str,help='Your phone number associated with Telegram account')
+argparser.add_argument('-p','--phone',dest='phone_number',type=str,help='Your phone number associated with Telegram account')
+argparser.add_argument('-l','--list', dest='action_list', help='List channels you subscribed',action='store_true')
+args = argparser.parse_args()
+print(args.phone_number)
+
 config_file = 'config.ini'
 def get_api_credentials():
     config = configparser.ConfigParser()
@@ -35,7 +39,8 @@ def get_api_credentials():
         }
         with open(config_file, 'w') as configfile:
             config.write(configfile)
-
+    if args.phone_number !="":
+         phone_number=args.phone_number; 
     return int(api_id), api_hash, phone_number
 
 # Get the credentials (either from the file or user input)
@@ -53,7 +58,8 @@ async def main():
         async for dialog in app.get_dialogs():
             # print(dialog.chat.title or dialog.chat.first_name, dialog.chat.type)
              if dialog.chat.type.value == "channel":
-                 print (f"{dialog.chat.title}")
+                 print (f"{dialog.chat.title}\t{dialog.chat.id}")
+                 #chat = await app.get_chat(dialog.chat.username)
                  channels.append(dialog)
 
 app.run(main())
